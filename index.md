@@ -1,3 +1,17 @@
+### React 18 (2022) – "Concurrency Begins"
+
+Lays the foundation for Concurrent React
+
+- Automatic Batching – React batches state updates even in async events.
+- Concurrent Rendering enabled via ```<StrictMode>``` and ```createRoot()```
+- ```startTransition()``` API – mark updates as non-urgent (transitions).
+- ```useDeferredValue()``` – defer part of the UI for smoother rendering.
+- ```useId()``` – generate unique, deterministic IDs for SSR hydration.
+- Streaming Server-Side Rendering (SSR) with support for Suspense
+- Suspense for Data Fetching (experimental) – helps prepare for React Server Components.
+
+---
+
 ### React 17 (2020) – "No New Features"
 
 Foundation for gradual upgrades
