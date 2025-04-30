@@ -1,0 +1,1 @@
+This repository contains a curated collection of notes documenting the evolution and development of ReactJS from version 15 to the latest release.
