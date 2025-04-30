@@ -1,3 +1,15 @@
+### React 17 (2020) – "No New Features"
+
+Foundation for gradual upgrades
+
+No new developer-facing features, but:
+- New event system (delegated to root rather than document)
+- Support for gradual upgrades – multiple React versions can coexist
+- Better tooling integration and backward compatibility
+- Focused on making it easier for libraries and apps to upgrade over time.
+
+---
+
 ### React 16 (2017) – "React Fiber"
 
 Massive internal rewrite (Fiber architecture)
