@@ -1,3 +1,16 @@
+### React 16 (2017) – "React Fiber"
+
+Massive internal rewrite (Fiber architecture)
+
+- New Reconciliation Engine ("Fiber") – allows interruption, prioritization, and async rendering.
+- Error Boundaries – use componentDidCatch() to handle errors in the component tree.
+- Fragments – ```<>...</>``` syntax to return multiple elements without a wrapping div.
+- Render Return Types Expanded – can now return arrays, strings, numbers, etc.
+- Portals – render children into a DOM node outside the parent hierarchy.
+- Complete rewrite of server-side rendering (SSR) – smaller and faster.
+
+---
+
 ### React 15 (2016)
 
 Refinement of the DOM rendering model
