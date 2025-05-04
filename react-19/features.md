@@ -2,7 +2,7 @@
 
 | #  | Topic                    | Role in learning                   |
 | -- | ------------------------ | ---------------------------------- |
-| 1  | React Server Components | Foundation: server-first rendering |
+| 1  | [**React Server Components**](./react-server-components.md) | Foundation: server-first rendering |
 | 2  | Server Functions | How server logic works             |
 | 3  | Asynchronous Transitions | Handling async UI patterns early   |
 | 4  | Actions | Core of mutations                  |
