@@ -8,6 +8,8 @@
 
 ### Resource 3: [From the blog](#from-the-blog)
 
+### Resource 4: [AI Research](#%EF%B8%8F-react-server-components--suspense-workflow)
+
 ---
 # ✨ AI Research
 
@@ -327,3 +329,199 @@ function Comments({commentsPromise}) {
 The note content is important data for the page to render, so we await it on the server. The comments are below the fold and lower-priority, so we start the promise on the server, and wait for it on the client with the use API. This will Suspend on the client, without blocking the note content from rendering.
 
 Since async components are not supported on the client, we await the promise with use.
+
+---
+
+### ▶️ React Server Components + Suspense Workflow
+
+### ✨ 🔹 **Traditional CSR Workflow**
+**Workflow:**  
+1️⃣ The browser loads `index.html` from a static server.  
+2️⃣ React **downloads JavaScript** and initializes the app in the client.  
+3️⃣ The client makes **API calls** to fetch data.  
+4️⃣ React renders everything **on the client**, updating state dynamically.  
+
+**Downside:** The client has to **download a large bundle**, make extra API calls, and do more processing.
+
+### 🔹 **RSC Workflow**
+
+#### 1️⃣ **Client Requests a Page**
+
+Instead of fetching a static HTML file, the client sends a request to a **React-aware server** (e.g., using **Next.js**, running on Node.js or an edge runtime).
+
+This server understands how to process **Server Components** and deliver an **RSC payload**.
+
+#### 2️⃣ **Server Processes Server Components**
+
+The server evaluates **React Server Components**:
+
+* Executes **data fetching**, **logic**, and **component rendering** entirely on the server
+* **No Server Component logic or data fetching is sent to the client**
+
+The result is an **RSC payload**—a structured stream of data representing the server-rendered React tree.
+
+#### 3️⃣ **Server Streams the RSC Payload to the Client**
+
+The **RSC payload** is streamed to the client:
+
+* It may include some **HTML** (e.g. for layout, static text)
+* It contains **serialized metadata and component instructions** for React to reconstruct the UI
+* **Suspense boundaries** allow parts of the UI to progressively load
+
+This approach improves perceived performance by rendering and displaying parts of the UI as soon as they’re ready.
+
+#### 4️⃣ **Client Hydrates and Enhances the UI**
+
+On the client:
+
+* **React reconstructs the UI** from the streamed RSC payload
+* **Client Components** (marked with `"use client"`) are hydrated — making them interactive
+* These handle **state, user interactions, animations**, etc.
+
+**Server Components remain static** on the client — they are never hydrated or re-executed in the browser.
+
+---
+
+### ▶️ For each client request, does the server run the Server Components and generate a dynamic bundle?
+
+✨ Yes, exactly! Every time the client makes a request, the server **processes the React Server Components (RSC)** dynamically, rendering the necessary UI **before** sending it back to the client. Instead of delivering a **pre-built JavaScript bundle**, the server **generates UI content on demand**, based on the request.
+
+### 🔹 How It Works:
+1️⃣ **Client Requests a Page** → The browser sends a request to the React server.  
+2️⃣ **Server Executes RSC Logic** → React runs **server components**, fetching data, executing logic, and assembling the UI.  
+3️⃣ **Server Sends Rendered Output** → Instead of a full JavaScript bundle, React sends **pre-rendered HTML & lightweight JavaScript**.  
+4️⃣ **Client Hydrates the UI** → The browser integrates interactive client-side components where needed.  
+
+### 🔹 Why This Is Different from Traditional Client-Side React:
+✅ **Less JavaScript sent** → The server does more work, reducing client-side computation.  
+✅ **No full re-fetching of JavaScript** → The server **only regenerates the parts that change**, making updates faster.  
+✅ **No unnecessary client-side API calls** → The server **handles data fetching**, so the client doesn’t need extra requests.  
+
+### 🔹 Does This Mean No More Bundles?
+Not entirely! Client-side components **still require JavaScript**, but React **splits the workload**:
+- **Server Components** (processed **on the server**, never sent as JavaScript).  
+- **Client Components** (interactive elements **hydrated** after receiving server-rendered content). 
+
+---
+
+# ✨ AI Research
+
+In earlier experiments, React Server Components (RSC) allowed components to be async, directly fetching data and returning JSX. This approach made it possible to handle data-fetching within the component itself, reducing client-side complexity.
+
+However, with the latest changes, there is a stronger distinction between server components and client components:
+- Server Components: These still handle data-fetching but must return serializable data (not JSX that contains client-side interactivity).
+
+- Client Components: If a component needs interactivity (event handlers, hooks like useState, etc.), it must include "use client" and be imported into the server component.
+
+This shift reinforces React’s architectural intent—keeping the server responsible for rendering static content while ensuring dynamic UI logic stays in client components.
+
+React Server Components (RSC) can still return JSX, but only serializable JSX—meaning it must be pure markup and cannot include client-side interactivity (like event handlers or hooks).
+
+How it works:
+- Server Components can render JSX but cannot use hooks (useState, useEffect, etc.) or handle client-side events.
+- If a component needs interactivity (buttons, inputs, animations), it must be a Client Component (marked with "use client").
+- A Server Component can import Client Components when needed, but it doesn’t always have to. If it’s purely static content, it can render JSX on its own.
+
+Key takeaway: Server Components can still return JSX, but if interactivity is required, you’ll need to import a Client Component.
+
+---
+
+▶️ So, if we fetch albums in a Server Component and iterate over them in a Client Component—returning only the titles—the response sent to the client will contain only the rendered strings, not the full album objects. In that sense, RSC is somewhat similar to GraphQL in its ability to send only the requested data.
+
+✨ Yes, that’s a great observation! React Server Components (RSC) do resemble GraphQL in the way they send only the necessary data to the client.
+
+How RSC Sends Minimal Data:
+- If a Server Component fetches a list of albums and passes only the titles to a Client Component, then the response to the client will only contain those titles—not the full album objects.
+
+- This is because RSC serializes the output and only sends what’s actually needed for rendering, rather than exposing the entire dataset to the client.
+
+- Compared to traditional React, where fetched objects are often passed to the client as full JavaScript structures, RSC ensures the client gets only the rendered data—making responses lighter and more efficient.
+
+How This Compares to GraphQL
+- GraphQL lets clients request only the specific fields they need, preventing over-fetching.
+
+- RSC naturally does something similar—not by querying the database selectively, but by controlling what gets sent to the client after rendering.
+
+While RSC isn't a direct replacement for GraphQL, it does follow a similar philosophy—only sending the essential pieces of data instead of the entire object.
+
+---
+
+You can't import server component into client component
+
+▶️ There was something that you could pass a server component as a child to client component?
+
+✨ Yes, in React Server Components (RSC), you can pass a Server Component as a child to a Client Component—but not by importing it directly.
+
+How does this work?
+Since Server Components return serialized data, they can be rendered inside a Client Component as long as they are passed as JSX from a parent (which is also a Server Component).
+
+The key is that the parent component (on the server) renders both the Server Component and the Client Component together.
+
+---
+
+▶️ Top-down rendering vs nesting in RSC
+
+✨ In React Server Components (RSC), top-down rendering and nesting describe different ways components interact with data-fetching and rendering.
+
+Top-down rendering – This approach means that data is fetched at the top level (like a parent component) and then passed down through props to child components. It keeps components lightweight because children don’t handle their own data-fetching; they simply receive the data they need. This can improve efficiency and reduce unnecessary API calls.
+
+Nesting – Nesting occurs when child components independently fetch their own data, rather than relying on a parent to pass it down. This is useful when components need to function autonomously or when different parts of the UI require separate data sources. However, it can lead to multiple separate API requests and may result in slower performance.
+
+In RSC, top-down rendering is often favored for better control and efficiency, especially when fetching data directly from a server. But nesting has its place when components need to be flexible and independent.
+
+---
+
+▶️ Do you still need a list "key" on the server?
+
+✨ In React, the key attribute is essential for efficiently managing lists of components. It helps React identify which items have changed, been added, or removed, making updates faster and avoiding unnecessary re-renders.
+
+Here’s why key is important:
+- Efficient Reconciliation – React uses keys to track components in lists. When an item changes, React only updates the affected elements instead of re-rendering the entire list.
+- Maintains Component State – If a list is shuffled or items are removed, React uses keys to preserve the state of each item correctly.
+- Prevents Bugs – Without keys, React relies on indexes, which can cause unexpected behavior when items are dynamically added or removed.
+
+In React Server Components (RSC), the role of the key attribute differs slightly compared to traditional client-side rendering.
+While React uses key for efficient reconciliation in the browser (to track which list items change, are added, or removed), in RSC, components are fully re-rendered on the server before being sent to the client. This means React doesn’t need key for diffing updates the same way it does with client-side rendering.
+
+However, you still need keys when:
+- Rendering lists dynamically – Even though RSC re-renders on the server, keys help maintain consistency when components interact with other UI elements.
+- Avoiding unnecessary updates – If a part of the UI hydrates and transitions into a client component, keys ensure proper updates in that transition.
+
+Keys are less crucial in pure RSC, but they remain important for maintaining correct UI behavior, especially when client-side hydration is involved.
+
+---
+
+▶️ Is "boundary" a new term in the RSC workflow?
+
+✨ Yes! In the context of **React Server Components (RSC)**, the term **"boundary"** refers to the distinction between **client components** and **server components**—essentially defining **where the client-server responsibilities are divided** in a React app.
+
+### **What Does "Client/Server Boundary" Mean in RSC?**
+- React Server Components allow some parts of the app to run **entirely on the server**, while others remain **interactive on the client**.
+- This **boundary** is determined at the **module level**, meaning some components are explicitly marked as **server components** while others are **client components**.
+- Directives like `"use client"` (for client components) define **which part of the React tree runs in the browser** versus on the **server**.
+
+### **Why Is This Important?**
+- In traditional React apps, the **entire UI runs on the client**.
+- With RSC, developers can push data-heavy computations to the **server**, reducing the need for extra API calls.
+- The **"boundary"** helps separate logic that benefits from **server-side execution** (database queries, processing, etc.) from **interactive UI components** that must run in the browser.
+
+### **Example of the Boundary in Action**
+```jsx
+// This runs on the server (no client-side JavaScript)
+export default async function ProductList() {
+  const products = await fetchProducts();
+  return <ul>{products.map(p => <li key={p.id}>{p.name}</li>)}</ul>;
+}
+
+// This runs on the client because it includes interactivity
+"use client";
+import { useState } from "react";
+
+export default function ProductSearch() {
+  const [query, setQuery] = useState("");
+  return <input value={query} onChange={e => setQuery(e.target.value)} />;
+}
+```
+Here, **ProductList** is a **server component**, while **ProductSearch** is a **client component**—this defines the **boundary** between them.
+
+So, **yes**, the term "boundary" is **relevant to the RSC workflow** and describes how React manages execution between the **server-side logic** and **client-side interactivity**.
