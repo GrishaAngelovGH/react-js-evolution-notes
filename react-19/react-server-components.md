@@ -10,6 +10,8 @@
 
 ### Resource 4: [AI Research](#%EF%B8%8F-react-server-components--suspense-workflow)
 
+### Resource 5: [Syntax Podcast](#syntax-podcast-718-react-server-components)
+
 ---
 # ✨ AI Research
 
@@ -525,3 +527,116 @@ export default function ProductSearch() {
 Here, **ProductList** is a **server component**, while **ProductSearch** is a **client component**—this defines the **boundary** between them.
 
 So, **yes**, the term "boundary" is **relevant to the RSC workflow** and describes how React manages execution between the **server-side logic** and **client-side interactivity**.
+
+---
+## Syntax Podcast #718: React Server Components
+---
+
+You're not running this on the client exclusively anymore.
+
+A server component is a component, a react component that JS, here we go, rendered on the server, meaning that it is not rendered on the client.
+All of the data fetching, all of the looping, templating, everything that needs to happen happens on the server, and React simply sends HTML from the server to the client and it's just rendered. 
+Why would you ever want to do that? First of all, server components are asynchronous, meaning we've never had asynchronous components in React before. And what that means is you're able to simply await a fetch before you return your JSX.
+
+Benefits:
+- You don't need a hook that is initially undefined and then when the data fetches, it updates and it re renders the component.
+
+- There's no Loading state because You're simply just waiting for the thing to be fetched before you go ahead
+
+- There's no API endpoints needed in a lot of cases because it's rendered on the server. You can just query your database directly in a function so you don't need to make a REST API. You don't need a GraphQL API.
+
+-You can import all your server side packages right into you your React component (and not to cause big bundle)
+
+- You can put your database logic in a separate file and import that function into it. And you can mark it as "use server" function. It will only ever run it on the server. So you don't have to worry about like it's not running on the client, obviously.
+
+Why would you want to run something server side? Large dependencies do not need to be loaded on the client. If you need a big package to do something on the client, you don't need to load in a meg of JavaScript. You can just use that server side where it's already loaded and simply just send the 8 divs as a result to the actual server. So it's going to be much smaller. You You don't have to find a client friendly version of something and make sure it works in all the browsers.
+
+So client components are components that have state, components that have custom use effects, components that have event handlers onClick, onSubmit, all of that good stuff. And the weird thing about this is that client components are still server rendered initially. However, they are rehydrated on the client, much like you would expect on a traditional like rehydrated server side rendered and then rehydrate on the browser approach. 
+Like that's what we've been doing a long time. The big difference here is that Not everything is a client component like it previously was.
+And in fact, you have to sort of opt in to client components in React when you do need to do the things that we just mentioned. When you do need custom state, effects, event and event handlers and anything else that like you're accessing the window object or something like that. That's when you would reach for a client component. Initially, I was like, you can't put state in a server component?! You don't need custom state on the server side because you simply just await it. It's asynchronous. So you simply just await the fetch request and then you you have the thing and that that state never updates because It's server rendered.
+
+The first point here is that components are server rendered by default. So when you are building a React application, by default, everything is server rendered. And then you opt in to client side components when you need interactivity and updating state.
+
+React Islands is another example that is very popular where you have an existing monolith application and then part of your application It's built in React because that is the piece that needs to be interactive, right, or JS Sprinkles.
+
+✨ React Islands refers to a technique used in web development where you integrate React components into a larger monolithic application—typically one built with traditional server-side rendering or another framework. These React components, or "islands," handle interactive elements of the application, providing dynamic functionality where needed.
+The term "JS Sprinkles" is often used to describe adding small amounts of JavaScript to enhance a mostly static page. In the case of React Islands, this means embedding React into specific parts of an existing app to improve interactivity without rewriting the whole application in React.
+This approach allows developers to modernize parts of their applications incrementally, rather than transitioning entirely to a new framework. 
+
+How server components work:
+
+The server will render the component and send the React code over the wire.
+And you can essentially think of that as The React server will render it's not HTML, but if you think about it as HTML. You can think of React as just sending the div HTML, and then the React on the client side will say, oh, I got some I got some HTML from the server. Let me just put that into that part of the website where it belongs. And what it is actually sending is a React component with references and all of the data in it.
+
+Streams structured HTML chunks to client.
+
+You can think of your page as a server component.
+And then as you get into smaller pieces of your website, those are all server components until you get to one where you say, oh, that needs interactivity. This has buttons. This has drag and drop. This has a map in it. So server components can have client components. However, client components cannot have server components. Client components and server components are separate things. Client components can have server components passed in JS children or as props. You can have a client component and then wrap that client component around another server component or pass it in via props.
+To mark something as a client component, you write "use client" at the top of the file, and that makes that file a client. You cannot put a client component and a server component in the same file.
+
+About Forms: You've always had to reach for some sort of third party library or roll your own custom state hook and never been a big fan of that. So part of server components, they have rolled out this thing called server actions and form actions. 
+
+So Form actions are functions that run when your form is submitted and you pass a function to the action prop on a form. So In HTML, you have an action that is a string, and that string is a URL of where the form is submitted to. In React the action property is reference to a function that will run when somebody submits that form. So and then that function itself will give you the entire form data object.
+
+Now those form actions run on the client by default, I said. However, if you mark them with a "use server" in the function, now that function will only be run on the server.
+
+But the initial reaction to this JS, so you're telling me Components are server by default and client you have to opt in to client side with use client. However, Form actions are client by default, and you have to opt in to server when you want them to run on the server.
+
+If you mark it with a "use server", it will then submit the form data to the server. It doesn't do a page reload or anything. It simply just submits the data to the server. And then you can then return data from the server, or you can return an entire component that needs to be re rendered on the page.
+
+I like this a lot where you can simply take a client side variable. Call the the function from the client and that variable will be available to you on the server side, which is just like not mind blowing because we certainly have had things like that. But that like seamless transition of passing a variable from the client side to the server side without having to do any API, no REST API, no JSON stringify.
+
+---
+Note:
+```js
+"use server"; // Marks this function as a server action
+
+async function submitForm(formData) {
+  const username = formData.get("username");
+  console.log("Processing on server:", username);
+  
+  // Example: Store data in a database (hypothetical function)
+  await saveToDatabase({ username });
+
+  return { message: "Form submitted successfully!" };
+}
+
+export default function MyForm() {
+  return (
+    <form action={submitForm}>
+      <input type="text" name="username" placeholder="Enter your name" />
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+```
+
+How This Works:
+The submitForm function is marked with "use server", meaning it runs on the server.
+
+When the form is submitted, React passes the form data to submitForm, handling it without needing a separate API endpoint.
+
+This approach reduces client-side JavaScript, improves security, and allows direct database interaction.
+
+Server functions are the conventional way of handling backend logic—they run on the server and are typically accessed via API routes, meaning the client (browser) makes a request to the server, and the server responds with data.
+
+Server Actions, on the other hand, are a newer React feature that allows components to execute server-side logic directly without requiring separate API calls. Instead of calling an external endpoint, the form or UI element directly triggers a function that runs on the server, streamlining data processing and reducing client-side JavaScript overhead.
+
+Terms:
+Server Actions → Functions that run directly on the server when triggered, without needing an API endpoint. Used for form submissions, database interactions, etc.
+
+Client Actions → Functions executed in the browser, typically for UI interactivity or client-side validation.
+
+Form Actions → Now integrated with Server Actions in React, where you pass a server function to the action prop on a ```<form>``` element.
+
+So in modern React, Form Actions are essentially powered by Server Actions, eliminating unnecessary API calls while keeping form submissions efficient.
+
+---
+
+Use form hooks for status, errors and optimistic updates
+
+Suspense built-in to handle asynchronous rendering.
+So you can take a react suspense, which is a component, and you wrap it.
+You wrap components that may take a while to render.
+So in an example that I did, I intentionally made a component that takes 4 seconds to render. And if you have a single component on your page that takes 4 seconds to render, guess what is also taking 4 seconds to show up?  The entire page. So one little component could make your whole page extremely slow. It's kind of promised that all the entire thing. So what react suspense will do is you can wrap your possibly slow components or you can wrap anything that fetches data in a suspense component. And what will happen is the server will immediately send a loader component. You specify what shows up when you are loading and you're sort of in a suspended state and you can show a spinner. You can show nothing and wait for 2 seconds and then show a spinner. You can show screen, that's pretty common in applications where it's just gray boxes where the content should show up. 
+And then the server will continue working on rendering that component so not to hold up the rest of the actual website. And then the server will stream them from the server into the client when it actually is rendered.
