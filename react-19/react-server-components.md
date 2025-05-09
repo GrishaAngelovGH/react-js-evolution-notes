@@ -640,3 +640,65 @@ So you can take a react suspense, which is a component, and you wrap it.
 You wrap components that may take a while to render.
 So in an example that I did, I intentionally made a component that takes 4 seconds to render. And if you have a single component on your page that takes 4 seconds to render, guess what is also taking 4 seconds to show up?  The entire page. So one little component could make your whole page extremely slow. It's kind of promised that all the entire thing. So what react suspense will do is you can wrap your possibly slow components or you can wrap anything that fetches data in a suspense component. And what will happen is the server will immediately send a loader component. You specify what shows up when you are loading and you're sort of in a suspended state and you can show a spinner. You can show nothing and wait for 2 seconds and then show a spinner. You can show screen, that's pretty common in applications where it's just gray boxes where the content should show up. 
 And then the server will continue working on rendering that component so not to hold up the rest of the actual website. And then the server will stream them from the server into the client when it actually is rendered.
+
+---
+## Syntax Podcast #895: React Server Components: Where are we at?
+---
+
+Topics:
+- Status of React server components - not fully caught on yet
+- React server components rendered on server, client components rendered on client
+- Usually use server and client components together
+- Server components can await data before rendering
+- Server components send output to browser similar to server rendered HTML
+- Not rehydrated, just sends HTML or React payload to client
+- Next.js and Waku have good RSC support currently
+- Building RSC support is hard on bundlers
+- RSC not standards based, relies heavily on bundlers
+- RSC not supported the same in all React frameworks
+
+Server components in React are components that are rendered either as as part of a build step, which is, like, ahead of time. Like, server components don't require a server, which is kinda funny. But in in most cases, you're probably going to be rendered on demand entirely on the server. That differs from client components, which client components are often rendered, obviously, in the client, but they can also still be be server rendered. The difference between the two is that server components simply just send their output to to the browser similar to how server rendering HTML works, versus client components. They bring everything they need in order to render themselves on the client, which it's not really one or the other. And in most cases, you you'll be using both of them, together.
+Server components are async, meaning that you can simply just await before you return data, which is amazing API, for many use cases. So you don't have to do, like, a weird loading state. And if it's loading, then return nothing. You can simply just await, like, a database call. And then right once that await is resolved, you can go ahead and render out your markup, your JSX. Server components, they can also be suspended.
+So, basically, you can continue rendering the rest of your app while these things are working on their render, so it's not like it's going to hold up if you are, awaiting them. Modern React is often streamed, meaning that the browser will start to render pieces, of the website. And then if you have something that might take a a little while, for example, on my new website, there's a Twitter in the footer. And I don't wanna hold up the entire page while I'm fetching Twitter. What if that takes takes a while? So you can suspend that, and then the rest of the website will get sent. And then when that one component, is done, it's no longer suspended. And then it will it will send the markup from the server to the client and render it on out.
+
+Server components send output to browser similar to server rendered HTML.
+
+Server components, basically, the way that is it sends RSC Wire Format, a React server component payload to browser, it's basically sending text. Not rehydrated, just sends HTML or React payload to client. Because rehydrated assumes that things are bound to it. Rehydrated means that the browsers is then set setting it up. So, server components are simply just sending either their HTML to the browser, or if you are doing something refreshing one of the components, it is simply just sending the outputted, React payload. You can think of it as a server sending HTML. It's not technically HTML. It's technically React code that is used to embed it, but it's not fair to say that it's rehydrated because there's no there's no client side stuff happening on a server function unless you're explicitly using a client component.
+
+Server functions, which are were previously called, server actions, are functions that run on the server and sort of work with RSC. So this could be like a database call, could be, like I said, markdown code highlighting. Server functions are functions that can be called either from the client or on a form submission, meaning that you essentially get, RPC, meaning that you can write a function that runs on the server, and then you can simply just call that from your UI. And instead of it importing that server function into your, client side application, it will just run the RPC back and forth commands between the two and send the data from one to another.
+
+And then there are several hooks you can use for maintaining useActionState() is the big one for maintaining the return what comes back from the response, any pending, like, if something is waiting, clearing caches, all that stuff.
+
+Michael Jackson, who's one of the creators of of React Router, he put out a tweet that says, React server components are nice in theory, but five years in, it's not working out.
+
+The moveBefore() API is a new JavaScript feature that allows developers to move elements within the DOM without losing their state, bindings, or event listeners. Traditionally, moving an element meant removing and reinserting it, which caused animations, focus states, and other properties to reset.
+
+With moveBefore(), you can:
+
+- Move elements without resetting their state.
+- Preserve event listeners, animations, and focus.
+- Improve performance in dynamic UI updates.
+
+This API is experimental and currently available in Chrome 133.
+
+```js
+// Select the parent container
+const parent = document.getElementById("container");
+
+// Select the element to move
+const elementToMove = document.getElementById("movingElement");
+
+// Select the reference element (where to move before)
+const referenceElement = document.getElementById("targetElement");
+
+// Move the element before the reference element
+parent.moveBefore(elementToMove, referenceElement);
+```
+
+React's Activity component.
+
+Vite 6 has this new API called the environment API. And the whole idea with the environment API is that you can run Vite in multiple environments. Vite was simply a browser based bundling tool. And now with the environment API, it can it can work in Node. It can work in on CloudFlare workers. It can run-in on the browser. And that then opens up a lot more for framework authors because now you can control the whole stack of, like, both my server and my client all are running through Vite, instead of having to do some weird, like, bundling.
+
+TanStack, a lot of people use TanStack Query. You can use RSC via Next.JS with TanStack Query currently. There is something called TanStack Start, which is their whole platform. TanStack Start itself does not, support RSC just yet. It does do SSR. I know we talked to Tanner, and there's an emphasis on, like, client side stuff within TanStack Start, but you can do SSR with it. Start does have RSC planned.
+
+And so RSC, a React core feature is only available in Next.JS and Waku and, you know, these kind of fragmented ways. So because of that, it is, like, fracturing the React landscape completely. There's no parity. You're not using React as a platform. You're using, parts of React at any given point.
