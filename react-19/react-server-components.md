@@ -12,6 +12,8 @@
 
 ### Resource 5: [Syntax Podcast](#syntax-podcast-718-react-server-components)
 
+### Resource 6: [RSC: A New Way to Build Fast and Interactive Web Apps w/ Aurora Scharff](#rsc-a-new-way-to-build-fast-and-interactive-web-apps-w-aurora-scharff)
+
 ---
 # ✨ AI Research
 
@@ -702,3 +704,155 @@ Vite 6 has this new API called the environment API. And the whole idea with the 
 TanStack, a lot of people use TanStack Query. You can use RSC via Next.JS with TanStack Query currently. There is something called TanStack Start, which is their whole platform. TanStack Start itself does not, support RSC just yet. It does do SSR. I know we talked to Tanner, and there's an emphasis on, like, client side stuff within TanStack Start, but you can do SSR with it. Start does have RSC planned.
 
 And so RSC, a React core feature is only available in Next.JS and Waku and, you know, these kind of fragmented ways. So because of that, it is, like, fracturing the React landscape completely. There's no parity. You're not using React as a platform. You're using, parts of React at any given point.
+
+---
+
+## RSC: A New Way to Build Fast and Interactive Web Apps w/ Aurora Scharff
+
+[Talk at NDC Conference](https://www.youtube.com/watch?v=UBc0IbJUzKA&ab_channel=NDCConferences)
+
+## Rendering Strategies
+
+### 1. Static website rendering
+
+- Pages are pre-assembled and uploaded to a static host
+- Simple and efficient
+- Struggles with dynamic data and impractical to maintain
+
+### 2. Multi-Page Applications
+
+- HTML and data are dynamically merged on the server
+- Serves the merged result on page load
+- Page reloads per request
+
+Pros:
+
+- Optimized for SEO
+- Unlimited scalability
+- More website insights i.e. google analytics
+
+Cons:
+
+- Slower overall performance
+- More development time
+- Hard to maintain
+
+### 3. Single-Page Applications
+
+Pros:
+
+- Instantaneous, app-like feel
+- Easy to debug
+- Caching capabilities
+
+Cons:
+
+- Slow initial load
+- SEO suffers
+- Needs JavaScript
+- Favors modern browsers
+- Less secure
+
+### 4. Server-Side Rendering (SSR)
+
+- Pre-render the initial HTML on the server
+- Fully-formed HTML when opening the page
+- JavaScript is fetched alongside it
+
+- Included feature in JavaScript "meta-frameworks" i.e. NextJS, Remix, SvelteKit, NuxtJS
+- Build time (SSG) and/or request time (SSR)
+- Pages generated in the build can be cached
+
+### 5. Static Site Generation (SSG)
+
+- Pages are pre-assembled and uploaded to a static host
+- Requires site redeployment whenever data changes
+- JavaScript is fetched alongside it
+
+### SSR Workflow
+
+1. User requests a site
+2. Server creates ready HTML files
+3. Browser renders HTML but it's not interactive
+4. Browser downloads JavaScript
+5. Browser executes JavaScript
+6. Website is fully interactive
+
+The problem with SSR: When users see the website as fully interactive, but it actually is not, the time they spend waiting for the app to become fully interactive could be even longer than in the SPA version of the app.
+
+### Why does this happen
+
+1. You have to fetch everything before you can show anything
+2. You have to load everything before you can hydrate anything
+3. You have to hydrate everything before you can interact with anything
+
+### Strategies to improve it
+
+- Partial Hydration: only attach JavaScript to certain components
+- Progressive Hydration: lazy load JavaScript to certain components
+- Selective Hydration: priority load JavaScript to certain components based on user interactivity
+
+### Streaming
+
+- Available from React 18 and big part of RSC performance
+- Split a request into chunks
+- Send each chunk as a stream to the client
+- Render each chunk as it is streamed in
+
+### React Server Components
+
+They run exclusively on the server and then streamed to the client.
+They never re-render just run once on the server to generate the UI.
+Their JavaScript is never send to the client.
+The server is part of the full-stack framework i.e. NextJS.
+The components can run during the build process of the app as an alternative to the server.
+The server components eliminate the need to write API.
+
+RSC vs SSR: server components are never hydrated meaning the resulting app is partially hydrated.
+
+Since RSC are exclusively run on the server we can write DB queries directly in the component.
+We can't use "useState()", "useEffect()", browser specific APIs (window.location) or JavaScript handlers in them.
+
+When we want that we use client components and they are marked with "use client" directive.
+
+React renders RSC into a special format called RSC Payload. It is streamable format that represents the DOM,
+like serialized version of the React tree. The RSC Payload contains the rendered server components with "holes" of
+references to client components and the props they passed to them. It's used both to generate the pre-rendered HTML
+on the server and to update the DOM on the client without a need for JavaScript.
+
+When RSC needs to be re-rendered due to a data change it refreshes on the server and seamlessly merges into
+the existing DOM without a hard refresh, updating only the parts that have changed. As a result the client state
+is preserved even as parts of the view are updated from the server. This is possible because the RSC Payload only
+contains references to the client components and can leave them untouched.
+
+### Benefits of using RSC:
+
+- Faster data fetching and access to backend resources, before they RSC is send to the client i.e. ahead of time.
+- Security: all sensitive logic and API keys are kept on the server witout risk to expose them
+- Caching: by rendering on the server the result can be cached and reused on subsequent request
+- Bundle size and performance: large dependencies could be kept on the server and to be excluded from the client side bundle
+- Streaming and Suspence integration: server components can be streamed meaning they can be sent in chunks and viewed as they
+become ready
+- Developer experience: a lot less hassle on the client with effects and keeping data in the state
+
+### Drawbacks of RSC:
+
+- Require a framework i.e. NextJS
+- Increased complexity with the new concepts
+- Learning curve
+- Early adoption
+
+Since the client components exists on the client and server components on the server, props need to be serializable.
+That means that we can't pass functions through the server boundary. Instead we must create API endpoints or better - server actions to communicate between them when we can't use props.
+
+If we use the same data in multiple components in a tree, we don't have to fetch it on the root and pass it down.
+We can fetch it in each component because it is automatically memoized.
+
+### Server Actions are the preferred way to mutate data.
+
+- Define a function/file with "use server"
+- NextJS creates "hidden" API endpoint
+- Use the function in any component
+- Provides a type-safe RPC-experience
+
+Summary: RSC in app router allow you to do whatever you need to do whether is MPA or SPA and include SSR or SEO all in the same stack optimized.
