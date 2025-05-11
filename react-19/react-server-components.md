@@ -14,6 +14,8 @@
 
 ### Resource 6: [RSC: A New Way to Build Fast and Interactive Web Apps w/ Aurora Scharff](#rsc-a-new-way-to-build-fast-and-interactive-web-apps-w-aurora-scharff)
 
+### Resource 7: [Streaming Components](./streaming-components.md)
+
 ---
 # ✨ AI Research
 
