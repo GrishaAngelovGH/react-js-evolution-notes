@@ -1,4 +1,4 @@
-# [```⬅️ Go Back```](./server-components.md#resource-7-streaming-components)
+# [```⬅️ Go Back```](./react-server-components.md#resource-7-streaming-components)
 
 ## ✨ AI Research 
 
@@ -378,3 +378,57 @@ While RSC naturally streams responses, Suspense improves the experience by showi
 This makes streaming more user-friendly by preventing incomplete UI flashes.
 
 React automatically streams UI out-of-order, and Suspense helps manage loading states—but no special setup is required.
+
+---
+## Syntax Podcast #493: Supper Club × Lee Robinson on React Suspense, Server Components
+---
+
+✅ Topic: What is React Suspense?
+
+Especially for folks who've written Node. Js code before, or, you know, browser code that's using async await. As you understand this model of I have some asynchronous code, maybe it's a fetch to some API or a request to go get data out of my database, and I wanna wait for that code to finish and then use that value somewhere else in my application.
+
+And the interesting thing about suspense is it brings that mental model to your React code base.
+
+So for for experienced React developers or or folks who've built apps with a, you know, a client side fetch side of a a useEffect, which Has some nuance to it.
+
+They might have fell into a state where they are Rendering kind of a a placeholder or a loading state. And then when that request resolves, then it swaps in, the state updates, and it shows the new value. The really nice thing about suspense is it's more of a a built in primitive to express asynchronous code in the React ecosystem.
+
+And with React 18 and kind of the future direction of React, It's really unlocking some interesting and unique possibilities. 
+
+✅ Topic: Selective hydration unlocks perf possibilities
+
+So you wrap a component or a, you know, a component tree with a suspense boundary, And you can, you know, progressively hydrate that part of the page as you scroll to it. So for example, on our landing page on the Next. Js landing page, actually, you know, we were loading the JavaScript to hydrate the entire page. And I was looking at the, the lighthouse run or, like, a performance run, and I saw there's an opportunity. Oh, you can improve importance by, you know, Including less JavaScript on the initial page load. And all I had to do was just put a suspense boundary around the components that I wanted to defer The hydration for. And it was wild. I just didn't realize how easy it was to enable that with React 18. 
+
+So hydration isn't a problem necessarily with normal client side render sites. Right? Because The JavaScript loads the the site, and that's the JavaScript. Right? But with when you have a server rendered site, you're using JavaScript to both render the server site as well as Interactivity in the UI. So you render the site, then hydration, comes about. And, basically, it's readding that JavaScript client side To hydrate the DOM with the the the client side JavaScript using the same, essentially, the same React code.
+
+✅ Topic: Next.js makes hydration easy compared to custom React
+
+the big benefit there is just reduced JavaScript load for the user. Right? Reduced initial JavaScript load. Yeah. Specifically, the metric to look at is the time to interactive. So by shipping less JavaScript, you're able to make that page interactive more quickly.
+
+And to your point, when you're server rendering and you're prerendering some HTML from the server, You wait for that JavaScript to load or hydrate so you can actually click on some stuff.
+
+It's better for performance, better for your your customers, your visitors If they can, you know, immediately click somewhere else on the page if they wanna go somewhere, they don't have to wait for
+
+some JavaScript to be loaded and have A lower time to interactive. Oh, that's cool. So, like, the way I'm understanding that is, like, let's say you have, part of your your website that you don't necessarily care to have the client side JavaScript to be rendered because Could it just be like a static component like a nav like a like a menu or something like that? Is that where you'd pop a a suspense component around? That's not obviously not Just what suspense is for, but is that what you're explaining here? So in this instance, the progressive hydration or selective hydration, I'm not sure what the actual specific, description word is there, but you're you're deferring the loading of the the JavaScript there. It's not necessarily that you'll have no JavaScript.
+
+✅ Topic: Deferring JavaScript with Suspense improves interactivity
+
+It's actually you know that you will have JavaScript.
+
+You're just saying it's not important or as important for the initial page load. So in the context of, marketing page, it's like, well, these these sections down towards the bottom, they're not in the initial paint.
+
+So let's just help improve the performance and only load that as we kinda get it into the viewport. Now there is a future improvement to make there that Next. Js can help Unlock with server components, which is for this section, for example, this is just HTML.
+
+There's no JavaScript. Maybe we don't even need to load JavaScript there. Anything at all.
+
+And that that's very similar to The defer attribute in on a script tag as well. Right? Exactly. Exactly.
+
+That makes sense. You're saying, okay. Like, I'd like to load this thing, but it's not, Like, maybe it's analytics or, something that is not that important to get the thing running, and we shouldn't hold everything up, while we download this little bit of JavaScript.
+
+✅ Topic: How does Suspense know when its children are done loading?
+
+✅ Topic: How does all that connects to server components?
+
+At first the vision with RSC was to use data inside your component, 
+fetched directly from your database. At the time it was released the react
+team said "we heard your feedback - developers want to ship less js on the client side when they are using React and want to have more control".
