@@ -16,6 +16,8 @@
 
 ### Resource 7: [Streaming Components](./streaming-components.md)
 
+### Resource 8: [NextJS Docs](./nextjs.md#docs)
+
 ---
 # ✨ AI Research
 
