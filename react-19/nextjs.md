@@ -64,3 +64,38 @@ Examples:
 ```import { revalidatePath } from 'next/cache'```
 - Redirecting  
 ```import { redirect } from 'next/navigation'```
+
+>### [🔗 Guide: Server Actions](https://nextjs.org/docs/app/guides#server-actions)
+
+- Passing additional values
+- Revalidating data
+- Redirecting
+- Setting cookies
+- Deleting cookies
+
+---
+
+>### [🔗 Building Your Application ➡ Data Fetching ➡ Server Actions and Mutations](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations)
+
+- Convention
+- Server Components
+- Client Components
+- Passing actions as props
+- Behavior
+- Examples
+  - Event handlers
+  - useEffect
+  - Error Handling
+  - Revalidating data
+  - Redirecting
+  - Cookies
+  - Security
+  - Authentication and authorization
+
+---
+
+>### [🔗 API Reference ➡ Directives](https://nextjs.org/docs/app/api-reference/directives)
+
+- use cache
+- use client
+- use server
