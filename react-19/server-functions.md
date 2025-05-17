@@ -7,6 +7,8 @@ Note: Until September 2024, we referred to all Server Functions as “Server Act
 
 Server Functions allow Client Components to call async functions executed on the server.
 
+### [NexJS Docs](./nextjs.md#server-functions)
+
 ### Example
 
 * A **Client Component** to handle UI & user interaction.
