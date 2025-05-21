@@ -10,7 +10,7 @@
 | 6  | [**use API**](./new-api-use.md) | Handling async results when needed |
 | 7  | [**useActionState()**](./new-hook-useactionstate.md) | Managing Action state              |
 | 8  | [**useFormStatus()**](./new-hook-useformstatus.md) | Feedback for forms                 |
-| 9  | useOptimistic() | Make UIs feel faster               |
+| 9  | [**useOptimistic()**](./new-hook-useoptimistic.md) | Make UIs feel faster               |
 | 10 | `ref` as a Prop          | Advanced interop                   |
 |    | React 19 introduces the ability to pass `ref` as a prop to function components, simplifying component composition and ref forwarding.|
 | 11 | Stylesheet Support       | DX improvements                    |
