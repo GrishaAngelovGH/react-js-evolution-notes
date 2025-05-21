@@ -7,7 +7,7 @@
 | 3  | [**Asynchronous Transitions**](./asynchronous-transitions.md) | Handling async UI patterns early   |
 | 4  | [**Actions**](./actions.md) | Core of mutations                  |
 | 5  | [**action and formAction Props**](./action-and-formaction-props.md) | Hooking up forms                   |
-| 6  | use API | Handling async results when needed |
+| 6  | [**use API**](./new-api-use.md) | Handling async results when needed |
 | 7  | useActionState() | Managing Action state              |
 | 8  | useFormStatus() | Feedback for forms                 |
 | 9  | useOptimistic() | Make UIs feel faster               |
