@@ -1,4 +1,4 @@
-# [```⬅️ Go Back```](./features.md#3-useactionstate)
+# [```⬅️ Go Back```](./features.md)
 
 ## ```From the docs                                           ```
 

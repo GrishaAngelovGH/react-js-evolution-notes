@@ -1,4 +1,4 @@
-# [```⬅️ Go Back```](./features.md#9-server-actions)
+# [```⬅️ Go Back```](./features.md)
 
 
 ### React Docs
