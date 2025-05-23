@@ -8,3 +8,4 @@
 >### [Origin](./origin.md)
 >### [Features](./features.md)
 >### [🔗 Dan Abramov: What does "use client" do?](https://overreacted.io/what-does-use-client-do/)
+>### [🔗 Dan Abramov: Impossible Components](https://overreacted.io/impossible-components/)
